@@ -60,7 +60,7 @@ const Register = () => {
 
                 <div className="form-group">
                   <span>
-                    <Link to="/messenger/login">Login?</Link>
+                    <Link to="/messenger/login">Already have an account? Sign in</Link>
                   </span>
                 </div>
               </form>
