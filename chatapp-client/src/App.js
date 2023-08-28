@@ -1,21 +1,16 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-import io from 'socket.io-client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
-  const [msg, setMsg] = useState('');
-
-  useEffect(() => {
-    const socket = io.connect('/');
-    socket.on('msg', (data) => {
-      setMsg(data);
-    });
-  }, [msg]);
-
   return (
     <div>
-      <h1>This is client side</h1>
-      <p>{msg}</p>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/messenger/login" element={<Login />} />
+          <Route path="/messenger/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
