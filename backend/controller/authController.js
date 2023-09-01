@@ -3,6 +3,7 @@ const validator = require('validator');
 const register = require('../models/authModel');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userRegister = (req, res) => {
   const form = formidable.formidable();
@@ -67,9 +68,35 @@ const userRegister = (req, res) => {
                 password: await bcrypt.hash(password[0], 10),
                 image: files.image.originalFilename,
               });
-              console.log('register successful', userCreate);
+
+              // creating token
+              const tokenUser = {
+                id: userCreate._id,
+                email: userCreate.email,
+                username: userCreate.username,
+                image: userCreate.image,
+                registerTime: userCreate.createdAt,
+              };
+
+              const token = jwt.sign(tokenUser, process.env.SECRET, {
+                expiresIn: process.env.TOKEN_EXP,
+              });
+
+              const options = {
+                expires: new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000),
+              };
+
+              console.log(options.expires);
+              res.status(201).cookie('authToken', token, options).json({
+                message: 'Registration successfull!',
+                token,
+              });
             } else {
-              console.log(err);
+              res.status(500).json({
+                error: {
+                  message: err,
+                },
+              });
             }
           });
         }
