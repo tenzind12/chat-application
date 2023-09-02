@@ -86,7 +86,6 @@ const userRegister = (req, res) => {
                 expires: new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000),
               };
 
-              console.log(options.expires);
               res.status(201).cookie('authToken', token, options).json({
                 message: 'Registration successfull!',
                 token,
@@ -94,7 +93,7 @@ const userRegister = (req, res) => {
             } else {
               res.status(500).json({
                 error: {
-                  message: err,
+                  message: ['Internal server error'],
                 },
               });
             }
@@ -103,7 +102,7 @@ const userRegister = (req, res) => {
       } catch (error) {
         res.status(500).json({
           error: {
-            message: error,
+            message: ['Internal server error1'],
           },
         });
       }
@@ -111,4 +110,4 @@ const userRegister = (req, res) => {
   });
 };
 
-module.exports = userRegister;
+module.exports = { userRegister };
