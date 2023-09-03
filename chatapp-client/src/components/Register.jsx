@@ -1,9 +1,20 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { userRegister } from '../store/actions/auth.action';
 
+import toast from 'react-hot-toast';
+import { ERROR_MESSAGE_CLEAR, SUCCESS_MESSAGE_CLEAR } from '../store/type/auth.types';
+
 const Register = () => {
+  const navigate = useNavigate();
+
+  const { loading, authenticated, error, successMessage, myInfo } = useSelector(
+    (state) => state.auth
+  );
+
+  console.log(myInfo);
+
   const dispatch = useDispatch();
 
   const [formFields, setFormFields] = useState({
@@ -52,6 +63,22 @@ const Register = () => {
 
     dispatch(userRegister(formData));
   };
+
+  // toast alert
+  useEffect(() => {
+    if (authenticated) {
+      navigate('/');
+    }
+
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch({ type: SUCCESS_MESSAGE_CLEAR });
+    }
+    if (error) {
+      error.map((err) => toast.error(err));
+      dispatch({ type: ERROR_MESSAGE_CLEAR });
+    }
+  }, [successMessage, error, authenticated]);
 
   return (
     <div className="register">
