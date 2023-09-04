@@ -13,8 +13,6 @@ const Register = () => {
     (state) => state.auth
   );
 
-  console.log(myInfo);
-
   const dispatch = useDispatch();
 
   const [formFields, setFormFields] = useState({
@@ -50,7 +48,7 @@ const Register = () => {
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  const register = (e) => {
+  const submitHandler = (e) => {
     const { username, email, password, confirmPassword, image } = formFields;
     e.preventDefault();
 
@@ -87,7 +85,7 @@ const Register = () => {
           <h3>Register</h3>
           <div>
             <div className="card-body">
-              <form onSubmit={register}>
+              <form onSubmit={submitHandler}>
                 <div className="form-group">
                   <label htmlFor="username">User Name</label>
                   <input

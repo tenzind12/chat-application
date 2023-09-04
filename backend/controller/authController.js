@@ -1,6 +1,6 @@
 const formidable = require('formidable');
 const validator = require('validator');
-const register = require('../models/authModel');
+const User = require('../models/authModel');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -52,7 +52,7 @@ const userRegister = (req, res) => {
 
       // inserting into database
       try {
-        const checkUser = await register.findOne({ email: email });
+        const checkUser = await User.findOne({ email: email });
         if (checkUser) {
           res.status(404).json({
             error: {
@@ -62,7 +62,7 @@ const userRegister = (req, res) => {
         } else {
           fs.copyFile(files.image[0].filepath, newPath, async (err) => {
             if (!err) {
-              const userCreate = await register.create({
+              const userCreate = await User.create({
                 username: username[0],
                 email: email[0],
                 password: await bcrypt.hash(password[0], 10),
@@ -82,11 +82,11 @@ const userRegister = (req, res) => {
                 expiresIn: process.env.TOKEN_EXP,
               });
 
-              const options = {
+              const cookieOptions = {
                 expires: new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000),
               };
 
-              res.status(201).cookie('authToken', token, options).json({
+              res.status(201).cookie('authToken', token, cookieOptions).json({
                 message: 'Registration successfull!',
                 token,
               });
@@ -110,4 +110,68 @@ const userRegister = (req, res) => {
   });
 };
 
-module.exports = { userRegister };
+const userLogin = async (req, res) => {
+  const { email, password } = req.body;
+  const error = [];
+
+  if (!email) error.push('Please provide your email');
+  if (!password) error.push('Please provide your password');
+  if (email && !validator.isEmail(email)) error.push('Please provide a valid email');
+
+  if (error.length > 0) {
+    res.status(400).json({
+      error: {
+        message: error,
+      },
+    });
+  } else {
+    try {
+      const user = await User.findOne({ email: email }).select('+password');
+      if (user) {
+        const matchPassword = await bcrypt.compare(password, user.password);
+        if (!matchPassword) {
+          res.status(401).json({
+            error: {
+              message: ['Incorrect Password'],
+            },
+          });
+        } else {
+          const tokenUser = {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+            image: user.image,
+            regiterTime: user.createdAt,
+          };
+
+          const token = jwt.sign(tokenUser, process.env.SECRET, {
+            expiresIn: process.env.TOKEN_EXP,
+          });
+
+          const cookieOptions = {
+            expires: new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000),
+          };
+
+          res.status(200).cookie('authToken', token, cookieOptions).json({
+            message: 'User logged in',
+            token,
+          });
+        }
+      } else {
+        res.status(400).json({
+          error: {
+            message: ['There is no linked account with that email and password'],
+          },
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        error: {
+          message: ['Internal server error'],
+        },
+      });
+    }
+  }
+};
+
+module.exports = { userRegister, userLogin };

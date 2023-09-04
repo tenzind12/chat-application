@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { REGISTER_FAIL, REGISTER_SUCCESS } from '../type/auth.types';
+import {
+  REGISTER_FAIL,
+  REGISTER_SUCCESS,
+  USER_LOGIN_FAIL,
+  USER_LOGIN_SUCCESS,
+} from '../type/auth.types';
 
 export const userRegister = (data) => {
   return async (dispatch) => {
@@ -12,7 +17,6 @@ export const userRegister = (data) => {
 
     try {
       const response = await axios.post('/api/messenger/user-register', data, config);
-      // console.log(response);
       localStorage.setItem('authToken', response.data.token);
 
       dispatch({
@@ -25,6 +29,34 @@ export const userRegister = (data) => {
     } catch (error) {
       dispatch({
         type: REGISTER_FAIL,
+        payload: {
+          error: error.response.data.error.message,
+        },
+      });
+    }
+  };
+};
+
+export const userLogin = (data) => {
+  return async (dispatch) => {
+    const config = {
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const response = await axios.post('/api/messenger/user-login', data, config);
+      localStorage.setItem('authToken', response.data.token);
+      console.log(response);
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: {
+          message: response.data.message,
+          token: response.data.token,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_LOGIN_FAIL,
         payload: {
           error: error.response.data.error.message,
         },
