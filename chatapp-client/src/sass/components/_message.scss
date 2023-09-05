@@ -23,6 +23,7 @@
   }
   .my-message {
     float: right;
+    clear: both;
     .my-text {
       display: flex;
       align-items: flex-end;
@@ -64,6 +65,7 @@
   }
   .fd-message {
     float: left;
+    clear: both;
     .fd-text {
       display: flex;
       align-items: flex-end;

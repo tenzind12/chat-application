@@ -46,6 +46,7 @@ const Message = () => {
           </div>
         </div>
       </div>
+
       <div className="fd-message">
         <div className="image-message-time">
           <img src="/images/88842intro-bg.jpg" alt="" />
