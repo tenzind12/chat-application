@@ -1,9 +1,18 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
+import { getFriends } from '../store/actions/messenger.action';
 
 const Messenger = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getFriends());
+  }, []);
+
   return (
     <div className="messenger">
       <div className="row">
