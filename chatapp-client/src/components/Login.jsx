@@ -15,8 +15,6 @@ const Login = () => {
     (state) => state.auth
   );
 
-  console.log(useSelector((state) => state.auth));
-
   const inputHandler = (e) => {
     setFormFields({
       ...formFields,

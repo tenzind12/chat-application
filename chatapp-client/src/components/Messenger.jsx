@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
@@ -8,6 +8,9 @@ import { getFriends } from '../store/actions/messenger.action';
 
 const Messenger = () => {
   const dispatch = useDispatch();
+
+  const { friends } = useSelector((state) => state.messenger);
+  const { myInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getFriends());
@@ -21,11 +24,11 @@ const Messenger = () => {
             <div className="top">
               <div className="image-name">
                 <div className="image">
-                  <img src="/images/792831653683268839.jfif" alt="user profile" />
+                  <img src={`/images/${myInfo.image}`} alt={myInfo.username} />
                 </div>
 
                 <div className="name">
-                  <h3>Hi Tenzin</h3>
+                  <h3>Hi {myInfo.username} </h3>
                 </div>
               </div>
 
@@ -53,18 +56,13 @@ const Messenger = () => {
             </div>
 
             <div className="friends">
-              <div className="hover-friend">
-                <Friends />
-              </div>
-              <div className="hover-friend">
-                <Friends />
-              </div>
-              <div className="hover-friend">
-                <Friends />
-              </div>
-              <div className="hover-friend">
-                <Friends />
-              </div>
+              {friends && friends.length > 0
+                ? friends.map((friend, i) => (
+                    <div className="hover-friend" key={i}>
+                      <Friends friend={friend} />
+                    </div>
+                  ))
+                : 'No Friends'}
             </div>
           </div>
         </div>
