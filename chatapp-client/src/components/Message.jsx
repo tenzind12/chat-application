@@ -1,66 +1,47 @@
-const Message = () => {
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+
+const Message = ({ currentFriend }) => {
+  const { messages } = useSelector((state) => state.messenger);
+  const { myInfo } = useSelector((state) => state.auth);
+
+  // scroll ref
+  const scrollRef = useRef();
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, scrollRef]);
+
   return (
     <div className="message-show">
-      <div className="my-message">
-        <div className="image-message">
-          <div className="my-text">
-            <p className="message-text">How r u?</p>
-          </div>
-        </div>
+      {messages && messages.length > 0
+        ? messages.map((message, i) =>
+            message.senderId === myInfo.id ? (
+              <div className="my-message" key={i} ref={scrollRef}>
+                <div className="image-message">
+                  <div className="my-text">
+                    <p className="message-text">{message.message.text}</p>
+                  </div>
+                </div>
 
-        <div className="time">2 Jan 2012</div>
-      </div>
+                <div className="time">{message.createdAt}</div>
+              </div>
+            ) : (
+              <div className="fd-message" key={i} ref={scrollRef}>
+                <div className="image-message">
+                  <img src={`/images/${currentFriend.image}`} alt="" />
+                  <div className="message-time">
+                    <div className="fd-text">
+                      <p className="message-text">{message.message.text}</p>
+                    </div>
 
-      <div className="fd-message">
-        <div className="image-message-time">
-          <img src="/images/88842intro-bg.jpg" alt="" />
-          <div className="message-time">
-            <div className="fd-text">
-              <p className="message-text">I m good</p>
-            </div>
-
-            <div className="time">3 Jan 2012</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="my-message">
-        <div className="image-message">
-          <div className="my-text">
-            <p className="message-text">Ok yaya</p>
-          </div>
-        </div>
-
-        <div className="time">2 Jan 2012</div>
-      </div>
-
-      <div className="fd-message">
-        <div className="image-message-time">
-          <img src="/images/88842intro-bg.jpg" alt="" />
-          <div className="message-time">
-            <div className="fd-text">
-              <p className="message-text">So wyd tomorrow?</p>
-            </div>
-
-            <div className="time">3 Jan 2012</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="fd-message">
-        <div className="image-message-time">
-          <img src="/images/88842intro-bg.jpg" alt="" />
-          <div className="message-time">
-            <div className="fd-text">
-              <p className="message-text">
-                <img src="/images/88842intro-bg.jpg" alt="" />
-              </p>
-            </div>
-
-            <div className="time">3 Jan 2012</div>
-          </div>
-        </div>
-      </div>
+                    <div className="time">{message.createdAt}</div>
+                  </div>
+                </div>
+              </div>
+            )
+          )
+        : ''}
     </div>
   );
 };

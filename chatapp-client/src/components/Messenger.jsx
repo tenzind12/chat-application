@@ -29,6 +29,9 @@ const Messenger = () => {
     };
 
     dispatch(requestSendMessage(data));
+
+    // clear input
+    setNewMessage('');
   };
 
   const { friends } = useSelector((state) => state.messenger);
