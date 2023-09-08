@@ -47,5 +47,30 @@ const uploadMsgToDB = async (req, res) => {
   }
 };
 
-module.exports = { getFriends, uploadMsgToDB };
-('Message validation failed: recieverId: Path `recieverId` is required.');
+const getMessage = async (req, res) => {
+  const myId = req.myId;
+  const currentFriendId = req.params.id;
+  try {
+    let getAllMessages = await Message.find({});
+    if (getAllMessages.length > 0)
+      getAllMessages = getAllMessages.filter(
+        (message) =>
+          (message.senderId === myId && message.receiverId === currentFriendId) ||
+          (message.receiverId === myId && message.senderId === currentFriendId)
+      );
+
+    res.status(200).json({
+      success: true,
+      message: getAllMessages,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        message: 'Internal server error',
+        data: error,
+      },
+    });
+  }
+};
+
+module.exports = { getFriends, uploadMsgToDB, getMessage };

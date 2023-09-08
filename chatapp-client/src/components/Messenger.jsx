@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare, FaRegHeart } from 'react-icons/fa6';
+import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
-import { requestFriends, requestSendMessage } from '../store/actions/messenger.action';
+import {
+  requestFriends,
+  requestGetMessage,
+  requestSendMessage,
+} from '../store/actions/messenger.action';
 
 const Messenger = () => {
   const [currentFriend, setCurrentFriend] = useState('');
@@ -41,6 +45,11 @@ const Messenger = () => {
       setCurrentFriend(friends[0]);
     }
   }, [friends]);
+
+  // for single friend convo
+  useEffect(() => {
+    dispatch(requestGetMessage(currentFriend._id));
+  }, [currentFriend?._id, dispatch]);
 
   return (
     <div className="messenger">
