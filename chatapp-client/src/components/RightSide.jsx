@@ -3,7 +3,8 @@ import Message from './Message';
 import MessageSend from './MessageSend';
 import FriendInfo from './FriendInfo';
 
-const RightSide = () => {
+const RightSide = ({ currentFriend, inputHandler, newMessage, sendMessageHandler }) => {
+  // console.log(currentFriend);
   return (
     <div className="col-9">
       <div className="right-side">
@@ -14,10 +15,10 @@ const RightSide = () => {
               <div className="header">
                 <div className="image-name">
                   <div className="image">
-                    <img src="/images/792831653683268839.jfif" alt="" />
+                    <img src={`./images/${currentFriend.image}`} alt="" />
                   </div>
                   <div className="name">
-                    <h3>Tenzin</h3>
+                    <h3>{currentFriend.username}</h3>
                   </div>
                 </div>
 
@@ -36,12 +37,16 @@ const RightSide = () => {
                 </div>
               </div>
               <Message />
-              <MessageSend />
+              <MessageSend
+                inputHandler={inputHandler}
+                newMessage={newMessage}
+                sendMessageHandler={sendMessageHandler}
+              />
             </div>
           </div>
 
           <div className="col-4">
-            <FriendInfo />
+            <FriendInfo currentFriend={currentFriend} />
           </div>
         </div>
       </div>

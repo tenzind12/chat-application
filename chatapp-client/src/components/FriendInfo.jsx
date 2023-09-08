@@ -1,17 +1,17 @@
 import { FaSquareCaretDown } from 'react-icons/fa6';
 
-const FriendInfo = () => {
+const FriendInfo = ({ currentFriend }) => {
   return (
     <div className="friend-info">
       <input type="checkbox" id="gallery" />
       <div className="image-name">
         <div className="image">
-          <img src="/images/88842intro-bg.jpg" alt="" />
+          <img src={`./images/${currentFriend.image}`} alt={currentFriend.username} />
         </div>
         <div className="active-user">Active</div>
 
         <div className="name">
-          <h4>Tenzin Dekyong</h4>
+          <h4>{currentFriend.username}</h4>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { FaFileImage, FaGift, FaPaperclip, FaRegHeart, FaRegPaperPlane } from 'react-icons/fa6';
 
-const MessageSend = () => {
+const MessageSend = ({ inputHandler, newMessage, sendMessageHandler }) => {
   const emojis = [
     '😀',
     '😃',
@@ -49,17 +49,25 @@ const MessageSend = () => {
       </div>
 
       <div className="message-type">
-        <input type="text" name="message" id="message" placeholder="Aa" className="form-control" />
+        <input
+          onChange={inputHandler}
+          value={newMessage}
+          type="text"
+          name="message"
+          id="message"
+          placeholder="Aa"
+          className="form-control"
+        />
 
-        <div className="file hover-gift">
-          <label htmlFor="emoji">
-            <FaRegPaperPlane />
-          </label>
+        <div className="file" onClick={sendMessageHandler}>
+          <FaRegPaperPlane />
         </div>
       </div>
 
       <div className="file">
-        <FaRegHeart />
+        <label htmlFor="emoji">
+          <FaRegHeart />
+        </label>
       </div>
 
       <div className="emoji-section">

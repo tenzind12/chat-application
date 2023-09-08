@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
 import ActiveFriend from './ActiveFriend';
@@ -7,14 +7,36 @@ import RightSide from './RightSide';
 import { getFriends } from '../store/actions/messenger.action';
 
 const Messenger = () => {
-  const dispatch = useDispatch();
+  const [currentFriend, setCurrentFriend] = useState('');
+  const [newMessage, setNewMessage] = useState('');
+
+  // message input handler
+  const inputHandler = (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  // message send handler
+  const sendMessageHandler = (e) => {
+    e.preventDefault();
+    console.log(newMessage);
+  };
+
+  console.log(currentFriend);
 
   const { friends } = useSelector((state) => state.messenger);
   const { myInfo } = useSelector((state) => state.auth);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFriends());
   }, []);
+
+  // load the first freind as current friend
+  useEffect(() => {
+    if (friends && friends.length > 0) {
+      setCurrentFriend(friends[0]);
+    }
+  }, [friends]);
 
   return (
     <div className="messenger">
@@ -58,7 +80,11 @@ const Messenger = () => {
             <div className="friends">
               {friends && friends.length > 0
                 ? friends.map((friend, i) => (
-                    <div className="hover-friend" key={i}>
+                    <div
+                      onClick={() => setCurrentFriend(friend)}
+                      className={`${currentFriend._id === friend._id ? 'active' : ''} hover-friend`}
+                      key={i}
+                    >
                       <Friends friend={friend} />
                     </div>
                   ))
@@ -67,7 +93,16 @@ const Messenger = () => {
           </div>
         </div>
 
-        <RightSide />
+        {currentFriend ? (
+          <RightSide
+            currentFriend={currentFriend}
+            inputHandler={inputHandler}
+            newMessage={newMessage}
+            sendMessageHandler={sendMessageHandler}
+          />
+        ) : (
+          'Select a friend from the list to continue the chat'
+        )}
       </div>
     </div>
   );
