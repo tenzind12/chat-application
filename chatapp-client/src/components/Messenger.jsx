@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
+import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare, FaRegHeart } from 'react-icons/fa6';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
-import { getFriends } from '../store/actions/messenger.action';
+import { requestFriends, requestSendMessage } from '../store/actions/messenger.action';
 
 const Messenger = () => {
   const [currentFriend, setCurrentFriend] = useState('');
@@ -18,17 +18,21 @@ const Messenger = () => {
   // message send handler
   const sendMessageHandler = (e) => {
     e.preventDefault();
-    console.log(newMessage);
-  };
+    const data = {
+      senderName: myInfo.username,
+      receiverId: currentFriend._id,
+      message: newMessage ? newMessage : '🤍',
+    };
 
-  console.log(currentFriend);
+    dispatch(requestSendMessage(data));
+  };
 
   const { friends } = useSelector((state) => state.messenger);
   const { myInfo } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getFriends());
+    dispatch(requestFriends());
   }, []);
 
   // load the first freind as current friend

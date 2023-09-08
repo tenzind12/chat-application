@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// to remove current user from the friends list
 module.exports.authMiddleware = async (req, res, next) => {
   const { authToken } = req.cookies;
   if (authToken) {
