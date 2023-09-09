@@ -24,7 +24,13 @@ const Message = ({ currentFriend }) => {
               <div className="my-message" key={i} ref={scrollRef}>
                 <div className="image-message">
                   <div className="my-text">
-                    <p className="message-text">{message.message.text}</p>
+                    <p className="message-text">
+                      {message.message.text === '' ? (
+                        <img src={`/images/chat/${message.message.image}`} alt="" />
+                      ) : (
+                        message.message.text
+                      )}
+                    </p>
                   </div>
                 </div>
 
@@ -36,7 +42,13 @@ const Message = ({ currentFriend }) => {
                   <img src={`/images/${currentFriend.image}`} alt="" />
                   <div className="message-time">
                     <div className="fd-text">
-                      <p className="message-text">{message.message.text}</p>
+                      <p className="message-text">
+                        {message.message.text === '' ? (
+                          <img src={`/images/chat/${message.message.image}`} alt="" />
+                        ) : (
+                          message.message.text
+                        )}
+                      </p>
                     </div>
 
                     <div className="time">{momentDateTime(message.createdAt)}</div>

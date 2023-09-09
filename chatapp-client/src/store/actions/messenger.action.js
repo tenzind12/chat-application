@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   GET_FRIENDS_SUCCESS,
+  IMAGE_SEND_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
 } from '../type/messenger.types';
@@ -46,6 +47,21 @@ export const requestGetMessage = (currentFriendId) => {
       });
     } catch (error) {
       console.log('requestGetMessage', error);
+    }
+  };
+};
+
+// sending image request
+export const requestSendImage = (data) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post('/api/messenger/send-image', data);
+      dispatch({
+        type: MESSAGE_SEND_SUCCESS,
+        payload: { messages: response.data.message },
+      });
+    } catch (error) {
+      console.log('requestSendImage', error);
     }
   };
 };

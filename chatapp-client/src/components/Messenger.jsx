@@ -7,6 +7,7 @@ import RightSide from './RightSide';
 import {
   requestFriends,
   requestGetMessage,
+  requestSendImage,
   requestSendMessage,
 } from '../store/actions/messenger.action';
 
@@ -38,6 +39,7 @@ const Messenger = () => {
   const { myInfo } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(requestFriends());
   }, []);
@@ -59,6 +61,26 @@ const Messenger = () => {
     console.log(emo);
     setNewMessage(`${newMessage}` + emo);
   };
+
+  // sending image
+  const imageSendHandler = (e) => {
+    const imageFileList = e.target.files;
+
+    if (imageFileList.length !== 0) {
+      const imageName = imageFileList[0].name;
+      const newImageName = Date.now() + imageName;
+
+      // form data
+      const formData = new FormData();
+      formData.append('senderName', myInfo.username);
+      formData.append('receiverId', currentFriend._id);
+      formData.append('imageName', newImageName);
+      formData.append('image', imageFileList[0]);
+
+      dispatch(requestSendImage(formData));
+    }
+  };
+
   return (
     <div className="messenger">
       <div className="row">
@@ -121,6 +143,7 @@ const Messenger = () => {
             newMessage={newMessage}
             sendMessageHandler={sendMessageHandler}
             emojiSendHandler={emojiSendHandler}
+            imageSendHandler={imageSendHandler}
           />
         ) : (
           'Select a friend from the list to continue the chat'

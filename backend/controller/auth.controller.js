@@ -4,6 +4,7 @@ const User = require('../models/auth.model');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { sanitizeFileName } = require('../utils');
 
 const userRegister = (req, res) => {
   const form = formidable.formidable();
@@ -45,7 +46,7 @@ const userRegister = (req, res) => {
     } else {
       const getImageName = image[0].originalFilename;
       const randomNumber = Math.floor(Math.random() * 99999);
-      const newImageName = randomNumber + getImageName;
+      const newImageName = sanitizeFileName(randomNumber + getImageName);
       files.image.originalFilename = newImageName;
       const newPath =
         __dirname + `../../../chatapp-client/public/images/${files.image.originalFilename}`;

@@ -10,6 +10,7 @@ const RightSide = ({
   sendMessageHandler,
   scrollRef,
   emojiSendHandler,
+  imageSendHandler,
 }) => {
   // console.log(currentFriend);
 
@@ -50,6 +51,7 @@ const RightSide = ({
                 newMessage={newMessage}
                 sendMessageHandler={sendMessageHandler}
                 emojiSendHandler={emojiSendHandler}
+                imageSendHandler={imageSendHandler}
               />
             </div>
           </div>
