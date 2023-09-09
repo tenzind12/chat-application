@@ -1,6 +1,6 @@
 import { FaFileImage, FaGift, FaPaperclip, FaRegHeart, FaRegPaperPlane } from 'react-icons/fa6';
 
-const MessageSend = ({ inputHandler, newMessage, sendMessageHandler }) => {
+const MessageSend = ({ inputHandler, newMessage, sendMessageHandler, emojiSendHandler }) => {
   const emojis = [
     '😀',
     '😃',
@@ -73,7 +73,9 @@ const MessageSend = ({ inputHandler, newMessage, sendMessageHandler }) => {
       <div className="emoji-section">
         <div className="emoji">
           {emojis.map((emoji, i) => (
-            <span key={i}>{emoji}</span>
+            <span key={i} onClick={() => emojiSendHandler(emoji)}>
+              {emoji}
+            </span>
           ))}
         </div>
       </div>

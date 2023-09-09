@@ -54,6 +54,11 @@ const Messenger = () => {
     dispatch(requestGetMessage(currentFriend._id));
   }, [currentFriend?._id, dispatch]);
 
+  // for sending emoji
+  const emojiSendHandler = (emo) => {
+    console.log(emo);
+    setNewMessage(`${newMessage}` + emo);
+  };
   return (
     <div className="messenger">
       <div className="row">
@@ -115,6 +120,7 @@ const Messenger = () => {
             inputHandler={inputHandler}
             newMessage={newMessage}
             sendMessageHandler={sendMessageHandler}
+            emojiSendHandler={emojiSendHandler}
           />
         ) : (
           'Select a friend from the list to continue the chat'

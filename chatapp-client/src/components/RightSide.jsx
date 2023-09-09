@@ -3,7 +3,14 @@ import Message from './Message';
 import MessageSend from './MessageSend';
 import FriendInfo from './FriendInfo';
 
-const RightSide = ({ currentFriend, inputHandler, newMessage, sendMessageHandler, scrollRef }) => {
+const RightSide = ({
+  currentFriend,
+  inputHandler,
+  newMessage,
+  sendMessageHandler,
+  scrollRef,
+  emojiSendHandler,
+}) => {
   // console.log(currentFriend);
 
   return (
@@ -42,6 +49,7 @@ const RightSide = ({ currentFriend, inputHandler, newMessage, sendMessageHandler
                 inputHandler={inputHandler}
                 newMessage={newMessage}
                 sendMessageHandler={sendMessageHandler}
+                emojiSendHandler={emojiSendHandler}
               />
             </div>
           </div>

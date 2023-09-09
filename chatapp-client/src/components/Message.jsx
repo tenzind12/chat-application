@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+const moment = require('moment');
 
 const Message = ({ currentFriend }) => {
   const { messages } = useSelector((state) => state.messenger);
@@ -9,8 +10,11 @@ const Message = ({ currentFriend }) => {
   const scrollRef = useRef();
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollRef.current?.scrollIntoView(); // { behavior: 'smooth' }
   }, [messages, scrollRef]);
+
+  // converting date time with moment
+  const momentDateTime = (dateString) => moment(dateString).format('D MMM YYYY');
 
   return (
     <div className="message-show">
@@ -24,7 +28,7 @@ const Message = ({ currentFriend }) => {
                   </div>
                 </div>
 
-                <div className="time">{message.createdAt}</div>
+                <div className="time">{momentDateTime(message.createdAt)}</div>
               </div>
             ) : (
               <div className="fd-message" key={i} ref={scrollRef}>
@@ -35,7 +39,7 @@ const Message = ({ currentFriend }) => {
                       <p className="message-text">{message.message.text}</p>
                     </div>
 
-                    <div className="time">{message.createdAt}</div>
+                    <div className="time">{momentDateTime(message.createdAt)}</div>
                   </div>
                 </div>
               </div>
