@@ -1,33 +1,23 @@
-const ActiveFriend = () => {
+const ActiveFriend = ({ activeUsers, setCurrentFriend }) => {
   return (
-    <div className="active-friend">
-      <div className="image-active-icon">
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img src="/images/792831653683268839.jfif" alt="active user" />
-          <div className="active-icon"></div>
-        </div>
-      </div>
-    </div>
+    <>
+      {activeUsers && activeUsers.length > 0
+        ? activeUsers.map((user, i) => (
+            <div
+              className="active-friend"
+              key={i}
+              onClick={() => setCurrentFriend({ ...user.userInfo, _id: user.userInfo.id })}
+            >
+              <div className="image-active-icon">
+                <div className="image">
+                  <img src={`/images/${user.userInfo.image}`} alt="active user" />
+                  <div className="active-icon"></div>
+                </div>
+              </div>
+            </div>
+          ))
+        : ''}
+    </>
   );
 };
 

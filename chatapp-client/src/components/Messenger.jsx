@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
+import { io } from 'socket.io-client';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
@@ -12,8 +13,37 @@ import {
 } from '../store/actions/messenger.action';
 
 const Messenger = () => {
+  // selecting data from redux store
+  const { friends } = useSelector((state) => state.messenger);
+  const { myInfo } = useSelector((state) => state.auth);
+
   const [currentFriend, setCurrentFriend] = useState('');
   const [newMessage, setNewMessage] = useState('');
+
+  // signed in user with socket
+  const [activeUsers, setActiveUsers] = useState([]);
+
+  // socket
+  const socketRef = useRef();
+  // console.log(socketRef);
+
+  useEffect(() => {
+    socketRef.current = io('ws://localhost:8000');
+  }, []);
+
+  useEffect(() => {
+    // sending to BE
+    socketRef.current.emit('addActiveUser', myInfo.id, myInfo);
+  }, [myInfo]);
+
+  useEffect(() => {
+    // receiving from BE
+    socketRef.current.on('getActiveUser', (users) => {
+      // dont show self in activeUsers
+      const filteredUser = users.filter((user) => user.userId !== myInfo.id);
+      setActiveUsers(filteredUser);
+    });
+  }, [myInfo]);
 
   // message input handler
   const inputHandler = (e) => {
@@ -34,9 +64,6 @@ const Messenger = () => {
     // clear input
     setNewMessage('');
   };
-
-  const { friends } = useSelector((state) => state.messenger);
-  const { myInfo } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -117,7 +144,11 @@ const Messenger = () => {
             </div>
 
             <div className="active-friends">
-              <ActiveFriend />
+              {activeUsers && activeUsers.length > 0 ? (
+                <ActiveFriend activeUsers={activeUsers} setCurrentFriend={setCurrentFriend} />
+              ) : (
+                'No friends online'
+              )}
             </div>
 
             <div className="friends">
