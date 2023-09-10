@@ -35,7 +35,16 @@
                   width: 10px;
                   height: 10px;
                   border-radius: 50%;
-                  background-color: rgb(28, 212, 28);
+                  background-color: #64bb64;
+                  right: 0px;
+                  bottom: 0pc;
+                }
+                .inactive-icon {
+                  position: absolute;
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  background-color: rgb(145, 146, 145);
                   right: 0px;
                   bottom: 0pc;
                 }

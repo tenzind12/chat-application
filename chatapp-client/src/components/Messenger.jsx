@@ -20,12 +20,12 @@ const Messenger = () => {
   const [currentFriend, setCurrentFriend] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
-  // signed in user with socket
-  const [activeUsers, setActiveUsers] = useState([]);
-
-  // socket
+  // S O C K E T  I O
   const socketRef = useRef();
   // console.log(socketRef);
+
+  // signed in user with socket
+  const [activeUsers, setActiveUsers] = useState([]);
 
   useEffect(() => {
     socketRef.current = io('ws://localhost:8000');
@@ -147,7 +147,9 @@ const Messenger = () => {
               {activeUsers && activeUsers.length > 0 ? (
                 <ActiveFriend activeUsers={activeUsers} setCurrentFriend={setCurrentFriend} />
               ) : (
-                'No friends online'
+                <small>
+                  <i>No friends online</i>
+                </small>
               )}
             </div>
 
@@ -175,6 +177,7 @@ const Messenger = () => {
             sendMessageHandler={sendMessageHandler}
             emojiSendHandler={emojiSendHandler}
             imageSendHandler={imageSendHandler}
+            activeUsers={activeUsers}
           />
         ) : (
           'Select a friend from the list to continue the chat'

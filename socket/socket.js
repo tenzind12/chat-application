@@ -16,12 +16,23 @@ const addUser = (userId, userInfo, socketId) => {
   }
 };
 
+const removeUser = (socketId) => {
+  activeUsers = activeUsers.filter((user) => user.socketId !== socketId);
+};
+
 io.on('connection', (socket) => {
   console.log('socket is connecting....');
 
   socket.on('addActiveUser', (userId, userInfo) => {
-    addUser(userId, userInfo, socket.id); // receiving from FE
+    // receiving from FE
+    addUser(userId, userInfo, socket.id);
     io.emit('getActiveUser', activeUsers); // sending to FE
+  });
+
+  socket.on('disconnect', () => {
+    removeUser(socket.id);
+    io.emit('getActiveUser', activeUsers); // sending to FE
+    console.log('user disconnected');
   });
 });
 
