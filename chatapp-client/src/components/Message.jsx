@@ -43,7 +43,7 @@ const Message = ({ currentFriend }) => {
                   <div className="message-time">
                     <div className="fd-text">
                       <p className="message-text">
-                        {message.message.text === '' ? (
+                        {message?.message.text === '' ? (
                           <img src={`/images/chat/${message.message.image}`} alt="" />
                         ) : (
                           message.message.text

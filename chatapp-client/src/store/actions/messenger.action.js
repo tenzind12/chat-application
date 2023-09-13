@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {
   GET_FRIENDS_SUCCESS,
-  IMAGE_SEND_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
+  SOCKET_MESSAGE,
 } from '../type/messenger.types';
 
 export const requestFriends = () => {
@@ -63,5 +63,17 @@ export const requestSendImage = (data) => {
     } catch (error) {
       console.log('requestSendImage', error);
     }
+  };
+};
+
+// sending realtime message
+export const sendRealtimeMessage = (message) => {
+  return (dispatch) => {
+    dispatch({
+      type: SOCKET_MESSAGE,
+      payload: {
+        messages: message,
+      },
+    });
   };
 };

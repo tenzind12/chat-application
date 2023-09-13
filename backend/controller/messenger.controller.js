@@ -50,33 +50,6 @@ const uploadMsgToDB = async (req, res) => {
   }
 };
 
-const getMessage = async (req, res) => {
-  const myId = req.myId;
-  const currentFriendId = req.params.id;
-
-  try {
-    let getAllMessages = await Message.find({});
-    if (getAllMessages.length > 0)
-      getAllMessages = getAllMessages.filter(
-        (message) =>
-          (message.senderId === myId && message.receiverId === currentFriendId) ||
-          (message.receiverId === myId && message.senderId === currentFriendId)
-      );
-
-    res.status(200).json({
-      success: true,
-      message: getAllMessages,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: {
-        message: 'Internal server error',
-        data: error,
-      },
-    });
-  }
-};
-
 const sendImage = async (req, res) => {
   const senderId = req.myId;
   const form = formidable.formidable();
@@ -133,6 +106,33 @@ const sendImage = async (req, res) => {
       });
     }
   });
+};
+
+const getMessage = async (req, res) => {
+  const myId = req.myId;
+  const currentFriendId = req.params.id;
+
+  try {
+    let getAllMessages = await Message.find({});
+    if (getAllMessages.length > 0)
+      getAllMessages = getAllMessages.filter(
+        (message) =>
+          (message.senderId === myId && message.receiverId === currentFriendId) ||
+          (message.receiverId === myId && message.senderId === currentFriendId)
+      );
+
+    res.status(200).json({
+      success: true,
+      message: getAllMessages,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        message: 'Internal server error',
+        data: error,
+      },
+    });
+  }
 };
 
 module.exports = { getFriends, uploadMsgToDB, getMessage, sendImage };

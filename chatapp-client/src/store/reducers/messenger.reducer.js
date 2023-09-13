@@ -2,6 +2,7 @@ import {
   GET_FRIENDS_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
+  SOCKET_MESSAGE,
 } from '../type/messenger.types';
 
 const messengerState = {
@@ -20,6 +21,7 @@ export const messengerReducer = (state = messengerState, action) => {
       return { ...state, messages: payload.messages };
 
     case MESSAGE_SEND_SUCCESS:
+    case SOCKET_MESSAGE:
       return { ...state, messages: [...state.messages, payload.messages] };
 
     default:

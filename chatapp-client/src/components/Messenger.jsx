@@ -10,7 +10,9 @@ import {
   requestGetMessage,
   requestSendImage,
   requestSendMessage,
+  sendRealtimeMessage,
 } from '../store/actions/messenger.action';
+import { SOCKET_MESSAGE } from '../store/type/messenger.types';
 
 const Messenger = () => {
   // selecting data from redux store
@@ -19,6 +21,7 @@ const Messenger = () => {
 
   const [currentFriend, setCurrentFriend] = useState('');
   const [newMessage, setNewMessage] = useState('');
+  const [newSocketMessage, setNewSocketMessage] = useState('');
 
   // S O C K E T  I O
   const socketRef = useRef();
@@ -29,13 +32,29 @@ const Messenger = () => {
 
   useEffect(() => {
     socketRef.current = io('ws://localhost:8000');
+    socketRef.current.on('getMessage', (message) => {
+      setNewSocketMessage(message);
+    });
   }, []);
 
   useEffect(() => {
-    // sending to BE
-    socketRef.current.emit('addActiveUser', myInfo.id, myInfo);
+    if (newSocketMessage && currentFriend) {
+      if (
+        newSocketMessage.senderId === currentFriend._id &&
+        newSocketMessage.receiverId === myInfo.id
+      ) {
+        dispatch(sendRealtimeMessage(newSocketMessage));
+      }
+    }
+
+    setNewSocketMessage('');
+  }, [newSocketMessage]);
+
+  useEffect(() => {
+    socketRef.current.emit('addActiveUser', myInfo.id, myInfo); // sending to BE
   }, [myInfo]);
 
+  // Getting current active users from backend
   useEffect(() => {
     // receiving from BE
     socketRef.current.on('getActiveUser', (users) => {
@@ -48,21 +67,6 @@ const Messenger = () => {
   // message input handler
   const inputHandler = (e) => {
     setNewMessage(e.target.value);
-  };
-
-  // message send handler
-  const sendMessageHandler = (e) => {
-    e.preventDefault();
-    const data = {
-      senderName: myInfo.username,
-      receiverId: currentFriend._id,
-      message: newMessage ? newMessage : '🤍',
-    };
-
-    dispatch(requestSendMessage(data));
-
-    // clear input
-    setNewMessage('');
   };
 
   const dispatch = useDispatch();
@@ -85,8 +89,34 @@ const Messenger = () => {
 
   // for sending emoji
   const emojiSendHandler = (emo) => {
-    console.log(emo);
+    // console.log(emo);
     setNewMessage(`${newMessage}` + emo);
+  };
+
+  // message send handler
+  const sendMessageHandler = (e) => {
+    const data = {
+      senderName: myInfo.username,
+      receiverId: currentFriend._id,
+      message: newMessage ? newMessage : '🤍',
+    };
+
+    dispatch(requestSendMessage(data));
+
+    // clear input
+    setNewMessage('');
+
+    // Send data to the socket backend
+    socketRef.current.emit('sendMessage', {
+      senderId: myInfo.id,
+      senderName: myInfo.username,
+      receiverId: currentFriend._id,
+      time: new Date(),
+      message: {
+        text: newMessage ? newMessage : '🤍',
+        image: '',
+      },
+    });
   };
 
   // sending image

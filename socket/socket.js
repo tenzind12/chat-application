@@ -20,6 +20,11 @@ const removeUser = (socketId) => {
   activeUsers = activeUsers.filter((user) => user.socketId !== socketId);
 };
 
+// check if user is active (online)
+const findFriend = (friendId) => {
+  return activeUsers.find((user) => user.userId === friendId);
+};
+
 io.on('connection', (socket) => {
   console.log('socket is connecting....');
 
@@ -27,6 +32,19 @@ io.on('connection', (socket) => {
     // receiving from FE
     addUser(userId, userInfo, socket.id);
     io.emit('getActiveUser', activeUsers); // sending to FE
+  });
+
+  socket.on('sendMessage', (data) => {
+    const user = findFriend(data.receiverId);
+    if (user !== undefined && user.length !== 0) {
+      socket.to(user.socketId).emit('getMessage', {
+        senderId: data.senderId,
+        senderName: data.senderName,
+        receiverId: data.receiverId,
+        createdAt: data.time,
+        message: data.message,
+      });
+    }
   });
 
   socket.on('disconnect', () => {
