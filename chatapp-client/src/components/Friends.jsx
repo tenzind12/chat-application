@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const Friends = ({ friend, myInfo }) => {
   const { friendInfo, messageInfo } = friend;
-  console.log(messageInfo);
+  console.log(messageInfo?.senderId, myInfo.id);
   return (
     <div className="friend">
       <div className="friend-image">
@@ -16,7 +16,11 @@ const Friends = ({ friend, myInfo }) => {
           <div className="msg-time">
             {
               <strong>
-                <small>{messageInfo && messageInfo.senderName + ': '}</small>
+                <small>
+                  {messageInfo && messageInfo.senderId !== myInfo.id
+                    ? messageInfo.senderName + ': '
+                    : 'You: '}
+                </small>
               </strong>
             }
             {messageInfo && messageInfo.message.text ? (
@@ -30,6 +34,17 @@ const Friends = ({ friend, myInfo }) => {
             <span>{messageInfo && moment(messageInfo.createdAt).startOf('mini').fromNow()}</span>
           </div>
         </div>
+
+        {/* new message green icon */}
+        {messageInfo?.senderId === myInfo.id ? (
+          <div className="seen-unseen-icon">
+            <img src={`/images/${friendInfo.image}`} alt={friendInfo.username} />
+          </div>
+        ) : (
+          <div className="seen-unseen-icon">
+            <div className="seen-icon"></div>
+          </div>
+        )}
       </div>
     </div>
   );
