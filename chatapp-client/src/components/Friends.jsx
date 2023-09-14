@@ -6,7 +6,6 @@ const Friends = ({ friend }) => {
           <img src={'./images/' + friend.image} alt={friend.username} />
         </div>
       </div>
-
       <div className="friend-name-seen">
         <div className="friend-name">
           <h4>{friend.username}</h4>

@@ -205,7 +205,6 @@ const Messenger = () => {
                 <div className="image">
                   <img src={`/images/${myInfo.image}`} alt={myInfo.username} />
                 </div>
-
                 <div className="name">
                   <h3>Hi {myInfo.username} </h3>
                 </div>
@@ -256,20 +255,22 @@ const Messenger = () => {
           </div>
         </div>
 
-        {currentFriend ? (
-          <RightSide
-            currentFriend={currentFriend}
-            inputHandler={inputHandler}
-            newMessage={newMessage}
-            sendMessageHandler={sendMessageHandler}
-            emojiSendHandler={emojiSendHandler}
-            imageSendHandler={imageSendHandler}
-            activeUsers={activeUsers}
-            typingMessage={typingMessage}
-          />
-        ) : (
-          'Select a friend from the list to continue the chat'
-        )}
+        <div className="col-9">
+          {currentFriend ? (
+            <RightSide
+              currentFriend={currentFriend}
+              inputHandler={inputHandler}
+              newMessage={newMessage}
+              sendMessageHandler={sendMessageHandler}
+              emojiSendHandler={emojiSendHandler}
+              imageSendHandler={imageSendHandler}
+              activeUsers={activeUsers}
+              typingMessage={typingMessage}
+            />
+          ) : (
+            'Select a friend from the list to continue the chat'
+          )}
+        </div>
       </div>
     </div>
   );

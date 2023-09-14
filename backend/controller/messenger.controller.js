@@ -7,11 +7,13 @@ const { sanitizeFileName } = require('../utils');
 const getFriends = async (req, res) => {
   const currentUserId = req.myId;
   try {
-    const friends = await User.find({});
-    const filteredFriends = friends.filter((friend) => friend.id !== currentUserId);
+    const friends = await User.find({ _id: { $ne: currentUserId } });
+
+    // const filteredFriends = friends.filter((friend) => friend.id !== currentUserId);
+
     res.status(200).json({
       success: true,
-      friends: filteredFriends,
+      friends: friends,
     });
   } catch (error) {
     res.status(500).json({
@@ -113,13 +115,19 @@ const getMessage = async (req, res) => {
   const currentFriendId = req.params.id;
 
   try {
-    let getAllMessages = await Message.find({});
-    if (getAllMessages.length > 0)
-      getAllMessages = getAllMessages.filter(
-        (message) =>
-          (message.senderId === myId && message.receiverId === currentFriendId) ||
-          (message.receiverId === myId && message.senderId === currentFriendId)
-      );
+    const getAllMessages = await Message.find({
+      $or: [
+        { senderId: myId, receiverId: currentFriendId },
+        { senderId: currentFriendId, receiverId: myId },
+      ],
+    });
+
+    // if (getAllMessages.length > 0)
+    //   getAllMessages = getAllMessages.filter(
+    //     (message) =>
+    //       (message.senderId === myId && message.receiverId === currentFriendId) ||
+    //       (message.receiverId === myId && message.senderId === currentFriendId)
+    //   );
 
     res.status(200).json({
       success: true,
