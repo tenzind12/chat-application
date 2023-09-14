@@ -12,7 +12,6 @@ import {
   requestSendMessage,
   sendRealtimeMessage,
 } from '../store/actions/messenger.action';
-import { SOCKET_MESSAGE } from '../store/type/messenger.types';
 
 const Messenger = () => {
   // selecting data from redux store
@@ -22,6 +21,7 @@ const Messenger = () => {
   const [currentFriend, setCurrentFriend] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [newSocketMessage, setNewSocketMessage] = useState('');
+  const [typingMessage, setTypingMessage] = useState('');
 
   // S O C K E T  I O
   const socketRef = useRef();
@@ -34,6 +34,10 @@ const Messenger = () => {
     socketRef.current = io('ws://localhost:8000');
     socketRef.current.on('getMessage', (message) => {
       setNewSocketMessage(message);
+    });
+
+    socketRef.current.on('getTypingMessage', (data) => {
+      setTypingMessage(data);
     });
   }, []);
 
@@ -67,6 +71,13 @@ const Messenger = () => {
   // message input handler
   const inputHandler = (e) => {
     setNewMessage(e.target.value);
+
+    // sending to backend (when user is typing)
+    socketRef.current.emit('typingMessage', {
+      senderId: myInfo.id,
+      receiverId: currentFriend._id,
+      message: e.target.value,
+    });
   };
 
   const dispatch = useDispatch();
@@ -89,7 +100,12 @@ const Messenger = () => {
 
   // for sending emoji
   const emojiSendHandler = (emo) => {
-    // console.log(emo);
+    socketRef.current.emit('typingMessage', {
+      senderId: myInfo.id,
+      receiverId: currentFriend._id,
+      message: emo,
+    });
+
     setNewMessage(`${newMessage}` + emo);
   };
 
@@ -117,6 +133,13 @@ const Messenger = () => {
         image: '',
       },
     });
+
+    // sending to backend (when user is done typing)
+    socketRef.current.emit('typingMessage', {
+      senderId: myInfo.id,
+      receiverId: currentFriend._id,
+      message: '',
+    });
   };
 
   // sending image
@@ -126,6 +149,18 @@ const Messenger = () => {
     if (imageFileList.length !== 0) {
       const imageName = imageFileList[0].name;
       const newImageName = Date.now() + imageName;
+
+      // Send data(image) to the socket backend
+      socketRef.current.emit('sendMessage', {
+        senderId: myInfo.id,
+        senderName: myInfo.username,
+        receiverId: currentFriend._id,
+        time: new Date(),
+        message: {
+          text: '',
+          image: newImageName,
+        },
+      });
 
       // form data
       const formData = new FormData();
@@ -208,6 +243,7 @@ const Messenger = () => {
             emojiSendHandler={emojiSendHandler}
             imageSendHandler={imageSendHandler}
             activeUsers={activeUsers}
+            typingMessage={typingMessage}
           />
         ) : (
           'Select a friend from the list to continue the chat'

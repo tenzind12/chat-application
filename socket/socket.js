@@ -47,6 +47,17 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('typingMessage', (data) => {
+    const user = findFriend(data.receiverId);
+    if (user !== undefined && user.length !== 0) {
+      socket.to(user.socketId).emit('getTypingMessage', {
+        senderId: data.senderId,
+        receiverId: data.receiverId,
+        message: data.message,
+      });
+    }
+  });
+
   socket.on('disconnect', () => {
     removeUser(socket.id);
     io.emit('getActiveUser', activeUsers); // sending to FE
