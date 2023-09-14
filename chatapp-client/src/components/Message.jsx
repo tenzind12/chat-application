@@ -13,9 +13,6 @@ const Message = ({ currentFriend, typingMessage }) => {
     scrollRef.current?.scrollIntoView(); // { behavior: 'smooth' }
   }, [messages, scrollRef]);
 
-  // converting date time with moment
-  const momentDateTime = (dateString) => moment(dateString).format('D MMM YYYY');
-
   return (
     <>
       <div className="message-show">
@@ -35,7 +32,7 @@ const Message = ({ currentFriend, typingMessage }) => {
                     </div>
                   </div>
 
-                  <div className="time">{momentDateTime(message.createdAt)}</div>
+                  <div className="time">{moment(message.createdAt).fromNow()}</div>
                 </div>
               ) : (
                 <div className="fd-message" key={i} ref={scrollRef}>
@@ -52,7 +49,7 @@ const Message = ({ currentFriend, typingMessage }) => {
                         </p>
                       </div>
 
-                      <div className="time">{momentDateTime(message.createdAt)}</div>
+                      <div className="time">{moment(message.createdAt).fromNow()}</div>
                     </div>
                   </div>
                 </div>

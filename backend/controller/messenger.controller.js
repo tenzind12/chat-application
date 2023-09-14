@@ -4,27 +4,45 @@ const Message = require('../models/message.model');
 const fs = require('fs');
 const { sanitizeFileName } = require('../utils');
 
-const getFriends = async (req, res) => {
-  const currentUserId = req.myId;
-  try {
-    const friends = await User.find({ _id: { $ne: currentUserId } });
+// get last message of each user
+const getLastMessage = async (myId, friendId) => {
+  const message = await Message.findOne({
+    $or: [
+      { senderId: myId, receiverId: friendId },
+      { senderId: friendId, receiverId: myId },
+    ],
+  }).sort({ updatedAt: -1 });
 
-    // const filteredFriends = friends.filter((friend) => friend.id !== currentUserId);
+  return message;
+};
+
+const getFriends = async (req, res) => {
+  const myId = req.myId;
+  let friendsMessage = [];
+  try {
+    const friends = await User.find({ _id: { $ne: myId } });
+
+    for (let i = 0; i < friends.length; i++) {
+      let lastMessage = await getLastMessage(myId, friends[i].id);
+      friendsMessage = [...friendsMessage, { friendInfo: friends[i], messageInfo: lastMessage }];
+    }
+
+    // const filteredFriends = friends.filter((friend) => friend.id !== myId);
 
     res.status(200).json({
       success: true,
-      friends: friends,
+      friends: friendsMessage,
     });
   } catch (error) {
     res.status(500).json({
       error: 'Internal server error',
+      data: error,
     });
   }
 };
 
 const uploadMsgToDB = async (req, res) => {
   const senderId = req.myId;
-  // console.log(req.body);
   const { senderName, receiverId, message } = req.body;
 
   try {
@@ -121,13 +139,6 @@ const getMessage = async (req, res) => {
         { senderId: currentFriendId, receiverId: myId },
       ],
     });
-
-    // if (getAllMessages.length > 0)
-    //   getAllMessages = getAllMessages.filter(
-    //     (message) =>
-    //       (message.senderId === myId && message.receiverId === currentFriendId) ||
-    //       (message.receiverId === myId && message.senderId === currentFriendId)
-    //   );
 
     res.status(200).json({
       success: true,
