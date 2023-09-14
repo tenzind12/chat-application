@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
 import { io } from 'socket.io-client';
+import toast from 'react-hot-toast';
+import useSound from 'use-sound';
+import notificationSound from '../audio/notification.mp3';
+import sendMessageSound from '../audio/sending.mp3';
 import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
@@ -14,6 +18,10 @@ import {
 } from '../store/actions/messenger.action';
 
 const Messenger = () => {
+  // sound
+  const [playNotification] = useSound(notificationSound);
+  const [playSendMessageSound] = useSound(sendMessageSound);
+
   // selecting data from redux store
   const { friends } = useSelector((state) => state.messenger);
   const { myInfo } = useSelector((state) => state.auth);
@@ -98,6 +106,18 @@ const Messenger = () => {
     dispatch(requestGetMessage(currentFriend._id));
   }, [currentFriend?._id, dispatch]);
 
+  // notification when not current friend sends a msg
+  useEffect(() => {
+    if (
+      newSocketMessage &&
+      newSocketMessage.senderId !== currentFriend._id &&
+      newSocketMessage.receiverId === myInfo.id
+    ) {
+      playNotification();
+      toast.success(`${newSocketMessage.senderName} has sent a message`);
+    }
+  }, [newSocketMessage]);
+
   // for sending emoji
   const emojiSendHandler = (emo) => {
     socketRef.current.emit('typingMessage', {
@@ -111,6 +131,7 @@ const Messenger = () => {
 
   // message send handler
   const sendMessageHandler = (e) => {
+    playSendMessageSound();
     const data = {
       senderName: myInfo.username,
       receiverId: currentFriend._id,
@@ -147,6 +168,7 @@ const Messenger = () => {
     const imageFileList = e.target.files;
 
     if (imageFileList.length !== 0) {
+      playSendMessageSound();
       const imageName = imageFileList[0].name;
       const newImageName = Date.now() + imageName;
 
