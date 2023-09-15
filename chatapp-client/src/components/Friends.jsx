@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const Friends = ({ friend, myInfo }) => {
   const { friendInfo, messageInfo } = friend;
-  console.log(messageInfo?.senderId, myInfo.id);
+
   return (
     <div className="friend">
       <div className="friend-image">

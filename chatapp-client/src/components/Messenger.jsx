@@ -16,6 +16,11 @@ import {
   requestSendMessage,
   sendRealtimeMessage,
 } from '../store/actions/messenger.action';
+import {
+  MESSAGE_SEND_SUCCESS,
+  MESSAGE_SEND_SUCCESS_CLEAR,
+  UPDATE_FRIEND_MESSAGE,
+} from '../store/type/messenger.types';
 
 const Messenger = () => {
   // sound
@@ -23,7 +28,7 @@ const Messenger = () => {
   const [playSendMessageSound] = useSound(sendMessageSound);
 
   // selecting data from redux store
-  const { friends } = useSelector((state) => state.messenger);
+  const { friends, messages, messageSendSuccess } = useSelector((state) => state.messenger);
   const { myInfo } = useSelector((state) => state.auth);
 
   const [currentFriend, setCurrentFriend] = useState('');
@@ -49,6 +54,7 @@ const Messenger = () => {
     });
   }, []);
 
+  // new socket message
   useEffect(() => {
     if (newSocketMessage && currentFriend) {
       if (
@@ -56,12 +62,19 @@ const Messenger = () => {
         newSocketMessage.receiverId === myInfo.id
       ) {
         dispatch(sendRealtimeMessage(newSocketMessage));
+        dispatch({
+          type: UPDATE_FRIEND_MESSAGE,
+          payload: {
+            messageInfo: newSocketMessage,
+          },
+        });
       }
     }
 
     setNewSocketMessage('');
   }, [newSocketMessage]);
 
+  // adding self to active user
   useEffect(() => {
     socketRef.current.emit('addActiveUser', myInfo.id, myInfo); // sending to BE
   }, [myInfo]);
@@ -97,7 +110,7 @@ const Messenger = () => {
   // load the first freind as current friend
   useEffect(() => {
     if (friends && friends.length > 0) {
-      setCurrentFriend(friends[0]);
+      setCurrentFriend(friends[0].friendInfo);
     }
   }, [friends]);
 
@@ -143,18 +156,6 @@ const Messenger = () => {
     // clear input
     setNewMessage('');
 
-    // Send data to the socket backend
-    socketRef.current.emit('sendMessage', {
-      senderId: myInfo.id,
-      senderName: myInfo.username,
-      receiverId: currentFriend._id,
-      time: new Date(),
-      message: {
-        text: newMessage ? newMessage : '🤍',
-        image: '',
-      },
-    });
-
     // sending to backend (when user is done typing)
     socketRef.current.emit('typingMessage', {
       senderId: myInfo.id,
@@ -162,6 +163,26 @@ const Messenger = () => {
       message: '',
     });
   };
+
+  //
+  useEffect(() => {
+    if (messageSendSuccess) {
+      const lastMessageSent = messages[messages.length - 1];
+      // Send data to the socket backend
+      socketRef.current.emit('sendMessage', lastMessageSent);
+
+      dispatch({
+        type: UPDATE_FRIEND_MESSAGE,
+        payload: {
+          messageInfo: lastMessageSent,
+        },
+      });
+
+      dispatch({
+        type: MESSAGE_SEND_SUCCESS_CLEAR,
+      });
+    }
+  }, [dispatch, messageSendSuccess, messages]);
 
   // sending image
   const imageSendHandler = (e) => {
