@@ -10,15 +10,19 @@ import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
 import {
+  deliveredMessageRequest,
   requestFriends,
   requestGetMessage,
   requestSendImage,
   requestSendMessage,
+  seenMessageRequest,
   sendRealtimeMessage,
 } from '../store/actions/messenger.action';
 import {
-  MESSAGE_SEND_SUCCESS,
+  DELIVERED_MESSAGE,
   MESSAGE_SEND_SUCCESS_CLEAR,
+  SEEN_MESSAGE,
+  SOCKET_MESSAGE,
   UPDATE_FRIEND_MESSAGE,
 } from '../store/type/messenger.types';
 
@@ -52,22 +56,46 @@ const Messenger = () => {
     socketRef.current.on('getTypingMessage', (data) => {
       setTypingMessage(data);
     });
+
+    socketRef.current.on('messageSeenResponse', (message) => {
+      dispatch({
+        type: SEEN_MESSAGE,
+        payload: {
+          messageInfo: message,
+        },
+      });
+    });
+    socketRef.current.on('messageDeliveredResponse', (message) => {
+      dispatch({
+        type: DELIVERED_MESSAGE,
+        payload: {
+          messageInfo: message,
+          status: 'delivered',
+        },
+      });
+    });
   }, []);
 
-  // new socket message
+  // when the user is current friend
   useEffect(() => {
     if (newSocketMessage && currentFriend) {
       if (
         newSocketMessage.senderId === currentFriend._id &&
         newSocketMessage.receiverId === myInfo.id
       ) {
-        dispatch(sendRealtimeMessage(newSocketMessage));
         dispatch({
-          type: UPDATE_FRIEND_MESSAGE,
+          type: SOCKET_MESSAGE,
           payload: {
-            messageInfo: newSocketMessage,
+            messages: newSocketMessage,
           },
         });
+        dispatch({
+          type: UPDATE_FRIEND_MESSAGE,
+          payload: { messageInfo: newSocketMessage, status: 'seen' },
+        });
+        // set message as seen
+        dispatch(seenMessageRequest(newSocketMessage));
+        socketRef.current.emit('messageSeen', newSocketMessage);
       }
     }
 
@@ -119,7 +147,7 @@ const Messenger = () => {
     dispatch(requestGetMessage(currentFriend._id));
   }, [currentFriend?._id, dispatch]);
 
-  // notification when not current friend sends a msg
+  // when user is not current friend
   useEffect(() => {
     if (
       newSocketMessage &&
@@ -128,6 +156,15 @@ const Messenger = () => {
     ) {
       playNotification();
       toast.success(`${newSocketMessage.senderName} has sent a message`);
+
+      // set message as delivered
+      dispatch(deliveredMessageRequest(newSocketMessage));
+
+      socketRef.current.emit('deliveredMessage', newSocketMessage);
+      dispatch({
+        type: UPDATE_FRIEND_MESSAGE,
+        payload: { messageInfo: newSocketMessage, status: 'delivered' },
+      });
     }
   }, [newSocketMessage]);
 

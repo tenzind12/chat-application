@@ -1,8 +1,10 @@
 import {
+  DELIVERED_MESSAGE,
   GET_FRIENDS_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
   MESSAGE_SEND_SUCCESS_CLEAR,
+  SEEN_MESSAGE,
   SOCKET_MESSAGE,
   UPDATE_FRIEND_MESSAGE,
 } from '../type/messenger.types';
@@ -49,14 +51,35 @@ export const messengerReducer = (state = messengerState, action) => {
       };
 
     case UPDATE_FRIEND_MESSAGE:
-      const index = state.friends.findIndex(
+      const updateIndex = state.friends.findIndex(
+        (friend) =>
+          friend.friendInfo._id === payload.messageInfo.receiverId ||
+          friend.friendInfo._id === payload.messageInfo.senderId
+      );
+      state.friends[updateIndex].messageInfo = payload.messageInfo;
+      state.friends[updateIndex].messageInfo.status = payload.status;
+
+      return state;
+
+    case SEEN_MESSAGE:
+      const seenIndex = state.friends.findIndex(
         (friend) =>
           friend.friendInfo._id === payload.messageInfo.receiverId ||
           friend.friendInfo._id === payload.messageInfo.senderId
       );
 
-      state.friends[index].messageInfo = payload.messageInfo;
-      return state;
+      state.friends[seenIndex].messageInfo.status = 'seen';
+      return { ...state };
+
+    case DELIVERED_MESSAGE:
+      const deliveredIndex = state.friends.findIndex(
+        (friend) =>
+          friend.friendInfo._id === payload.messageInfo.receiverId ||
+          friend.friendInfo._id === payload.messageInfo.senderId
+      );
+
+      state.friends[deliveredIndex].messageInfo.status = payload.status;
+      return { ...state };
 
     default:
       return state;

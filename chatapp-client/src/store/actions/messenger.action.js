@@ -3,7 +3,6 @@ import {
   GET_FRIENDS_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
-  SOCKET_MESSAGE,
 } from '../type/messenger.types';
 
 export const requestFriends = () => {
@@ -66,14 +65,24 @@ export const requestSendImage = (data) => {
   };
 };
 
-// sending realtime message
-export const sendRealtimeMessage = (message) => {
-  return (dispatch) => {
-    dispatch({
-      type: SOCKET_MESSAGE,
-      payload: {
-        messages: message,
-      },
-    });
+export const seenMessageRequest = (message) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post('/api/messenger/seen-message', message);
+      console.log(response);
+    } catch (error) {
+      console.log('seenMessageRequest ', error);
+    }
+  };
+};
+
+export const deliveredMessageRequest = (message) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post('/api/messenger/delivered-message', message);
+      console.log(response);
+    } catch (error) {
+      console.log('seenMessageRequest ', error);
+    }
   };
 };

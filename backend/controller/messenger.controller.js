@@ -154,4 +154,46 @@ const getMessage = async (req, res) => {
   }
 };
 
-module.exports = { getFriends, uploadMsgToDB, getMessage, sendImage };
+// seen message
+const seenMessage = async (req, res) => {
+  const messageId = req.body._id;
+
+  try {
+    await Message.findByIdAndUpdate(
+      messageId,
+      { status: 'seen' } // { returnOriginal: false }
+    );
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({
+      error: { message: 'Internal server error', data: error },
+    });
+  }
+};
+
+// delivered message
+const deliveredMessage = async (req, res) => {
+  const messageId = req.body._id;
+
+  try {
+    await Message.findByIdAndUpdate(messageId, {
+      status: 'delivered',
+    });
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: { message: 'Internal server error', data: error },
+    });
+  }
+};
+
+module.exports = {
+  getFriends,
+  uploadMsgToDB,
+  getMessage,
+  sendImage,
+  seenMessage,
+  deliveredMessage,
+};
