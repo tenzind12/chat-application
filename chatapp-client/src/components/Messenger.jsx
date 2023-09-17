@@ -16,13 +16,15 @@ import {
   requestSendImage,
   requestSendMessage,
   seenMessageRequest,
-  sendRealtimeMessage,
 } from '../store/actions/messenger.action';
 import {
   DELIVERED_MESSAGE,
+  MESSAGE_GET_SUCCESS_CLEAR,
   MESSAGE_SEND_SUCCESS_CLEAR,
+  SEEN_ALL,
   SEEN_MESSAGE,
   SOCKET_MESSAGE,
+  UPDATE_CURRENT_FRIEND_MESSAGE,
   UPDATE_FRIEND_MESSAGE,
 } from '../store/type/messenger.types';
 
@@ -32,7 +34,9 @@ const Messenger = () => {
   const [playSendMessageSound] = useSound(sendMessageSound);
 
   // selecting data from redux store
-  const { friends, messages, messageSendSuccess } = useSelector((state) => state.messenger);
+  const { friends, messages, messageSendSuccess, messageGetSuccess } = useSelector(
+    (state) => state.messenger
+  );
   const { myInfo } = useSelector((state) => state.auth);
 
   const [currentFriend, setCurrentFriend] = useState('');
@@ -65,6 +69,7 @@ const Messenger = () => {
         },
       });
     });
+
     socketRef.current.on('messageDeliveredResponse', (message) => {
       dispatch({
         type: DELIVERED_MESSAGE,
@@ -72,6 +77,13 @@ const Messenger = () => {
           messageInfo: message,
           status: 'delivered',
         },
+      });
+    });
+
+    socketRef.current.on('seenSuccess', (data) => {
+      dispatch({
+        type: SEEN_ALL,
+        payload: data,
       });
     });
   }, []);
@@ -136,16 +148,40 @@ const Messenger = () => {
   }, []);
 
   // load the first freind as current friend
-  useEffect(() => {
-    if (friends && friends.length > 0) {
-      setCurrentFriend(friends[0].friendInfo);
-    }
-  }, [friends]);
+  // useEffect(() => {
+  //   if (friends && friends.length > 0) {
+  //     setCurrentFriend(friends[0].friendInfo);
+  //   }
+  // }, [friends]);
 
   // for single friend convo
   useEffect(() => {
     dispatch(requestGetMessage(currentFriend._id));
+    if (friends.length > 0) {
+    }
   }, [currentFriend?._id, dispatch]);
+
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (messages.length > 0) {
+      if (lastMessage.senderId !== myInfo.id && lastMessage.status !== 'seen') {
+        dispatch({
+          type: UPDATE_CURRENT_FRIEND_MESSAGE,
+          payload: {
+            id: currentFriend._id,
+          },
+        });
+
+        socketRef.current.emit('seen', {
+          senderId: currentFriend._id,
+          receiverId: myInfo.id,
+        });
+        dispatch(seenMessageRequest({ _id: lastMessage._id }));
+      }
+    }
+
+    dispatch({ type: MESSAGE_GET_SUCCESS_CLEAR });
+  }, [messageGetSuccess]);
 
   // when user is not current friend
   useEffect(() => {

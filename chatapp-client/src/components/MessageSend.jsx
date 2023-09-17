@@ -71,15 +71,15 @@ const MessageSend = ({
           className="form-control"
         />
 
-        <div className="file" onClick={sendMessageHandler}>
-          <FaRegPaperPlane />
+        <div className="file">
+          <label htmlFor="emoji">
+            <FaRegHeart />
+          </label>
         </div>
       </div>
 
-      <div className="file">
-        <label htmlFor="emoji">
-          <FaRegHeart />
-        </label>
+      <div className="file" onClick={sendMessageHandler}>
+        <FaRegPaperPlane />
       </div>
 
       <div className="emoji-section">

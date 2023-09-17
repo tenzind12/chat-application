@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { FaCheckDouble } from 'react-icons/fa6';
 
 const Friends = ({ friend, myInfo }) => {
   const { friendInfo, messageInfo } = friend;
@@ -40,13 +39,15 @@ const Friends = ({ friend, myInfo }) => {
         {messageInfo && myInfo.id === messageInfo?.senderId ? (
           <div className="seen-unseen-icon">
             {messageInfo.status === 'seen' ? (
-              <img src={`./images/${friendInfo.image}`} alt="" />
+              <img src="/icons/seen-icon.png" alt="" />
             ) : messageInfo.status === 'delivered' ? (
               <div className="delivered">
-                <FaCheckDouble />
+                <img src="/icons/delivered-icon.png" alt="" />
               </div>
             ) : (
-              <div className="unseen"> </div>
+              <div className="unseen">
+                <img src="/icons/single-tick.png" alt="" />
+              </div>
             )}
           </div>
         ) : (
