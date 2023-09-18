@@ -16,46 +16,52 @@ const Message = ({ currentFriend, typingMessage }) => {
   return (
     <>
       <div className="message-show">
-        {messages && messages.length > 0
-          ? messages.map((message, i) =>
-              message.senderId === myInfo.id ? (
-                <div className="my-message" key={i} ref={scrollRef}>
-                  <div className="image-message">
-                    <div className="my-text">
+        {messages && messages.length > 0 ? (
+          messages.map((message, i) =>
+            message.senderId === myInfo.id ? (
+              <div className="my-message" key={i} ref={scrollRef}>
+                <div className="image-message">
+                  <div className="my-text">
+                    <p className="message-text">
+                      {message.message.text === '' ? (
+                        <img src={`/images/chat/${message.message.image}`} alt="" />
+                      ) : (
+                        message.message.text
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="time">{moment(message.createdAt).fromNow()}</div>
+              </div>
+            ) : (
+              <div className="fd-message" key={i} ref={scrollRef}>
+                <div className="image-message">
+                  <img src={`/images/${currentFriend.image}`} alt="" />
+                  <div className="message-time">
+                    <div className="fd-text">
                       <p className="message-text">
-                        {message.message.text === '' ? (
+                        {message?.message.text === '' ? (
                           <img src={`/images/chat/${message.message.image}`} alt="" />
                         ) : (
                           message.message.text
                         )}
                       </p>
                     </div>
-                  </div>
 
-                  <div className="time">{moment(message.createdAt).fromNow()}</div>
-                </div>
-              ) : (
-                <div className="fd-message" key={i} ref={scrollRef}>
-                  <div className="image-message">
-                    <img src={`/images/${currentFriend.image}`} alt="" />
-                    <div className="message-time">
-                      <div className="fd-text">
-                        <p className="message-text">
-                          {message?.message.text === '' ? (
-                            <img src={`/images/chat/${message.message.image}`} alt="" />
-                          ) : (
-                            message.message.text
-                          )}
-                        </p>
-                      </div>
-
-                      <div className="time">{moment(message.createdAt).fromNow()}</div>
-                    </div>
+                    <div className="time">{moment(message.createdAt).fromNow()}</div>
                   </div>
                 </div>
-              )
+              </div>
             )
-          : ''}
+          )
+        ) : (
+          <div className="friend_connect">
+            <img src={`/images/${currentFriend.image}`} alt={currentFriend.username} />
+            <h3>Connect with {currentFriend.username}</h3>
+            <span>Account created {moment(currentFriend.createdAt).startOf('mini').fromNow()}</span>
+          </div>
+        )}
       </div>
 
       {/* display user is typing */}

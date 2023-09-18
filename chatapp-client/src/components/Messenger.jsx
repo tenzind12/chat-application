@@ -323,7 +323,7 @@ const Messenger = () => {
               </div>
             </div>
 
-            <div className="active-friends">
+            {/* <div className="active-friends">
               {activeUsers && activeUsers.length > 0 ? (
                 <ActiveFriend activeUsers={activeUsers} setCurrentFriend={setCurrentFriend} />
               ) : (
@@ -331,7 +331,7 @@ const Messenger = () => {
                   <i>No friends online</i>
                 </small>
               )}
-            </div>
+            </div> */}
 
             <div className="friends">
               {friends && friends.length > 0
@@ -343,7 +343,8 @@ const Messenger = () => {
                       } hover-friend`}
                       key={i}
                     >
-                      <Friends friend={friend} myInfo={myInfo} />
+                      <Friends friend={friend} activeUsers={activeUsers} myInfo={myInfo} />
+                      <div className="active-icon"></div>
                     </div>
                   ))
                 : 'No Friends'}

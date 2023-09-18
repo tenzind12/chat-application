@@ -1,13 +1,22 @@
 import moment from 'moment';
 
-const Friends = ({ friend, myInfo }) => {
+const Friends = ({ friend, myInfo, activeUsers }) => {
   const { friendInfo, messageInfo } = friend;
+
+  console.log(friendInfo, activeUsers);
 
   return (
     <div className="friend">
       <div className="friend-image">
         <div className="image">
           <img src={'./images/' + friendInfo.image} alt={friend.friendInfo.username} />
+
+          {/* show green dot when online */}
+          {activeUsers &&
+            activeUsers.length > 0 &&
+            activeUsers.some((user) => user.userId === friendInfo._id) && (
+              <div className="active_icon"></div>
+            )}
         </div>
       </div>
       <div className="friend-name-seen">
