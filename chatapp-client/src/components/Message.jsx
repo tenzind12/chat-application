@@ -29,6 +29,18 @@ const Message = ({ currentFriend, typingMessage }) => {
                         message.message.text
                       )}
                     </p>
+
+                    {i === messages.length - 1 && message.senderId === myInfo.id ? (
+                      message.status === 'seen' ? (
+                        <img className="img" src={`/images/${currentFriend.image}`} alt="" />
+                      ) : message.status === 'delivered' ? (
+                        <img className="img" src="/icons/delivered-icon.png" alt="" />
+                      ) : (
+                        <img className="img" src="/icons/single-tick.png" alt="" />
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </div>
 

@@ -3,8 +3,6 @@ import moment from 'moment';
 const Friends = ({ friend, myInfo, activeUsers }) => {
   const { friendInfo, messageInfo } = friend;
 
-  console.log(friendInfo, activeUsers);
-
   return (
     <div className="friend">
       <div className="friend-image">
@@ -21,10 +19,28 @@ const Friends = ({ friend, myInfo, activeUsers }) => {
       </div>
       <div className="friend-name-seen">
         <div className="friend-name">
-          <h4>{friendInfo.username}</h4>
+          <h4
+            className={
+              messageInfo?.senderId !== myInfo.id &&
+              messageInfo?.status !== undefined &&
+              messageInfo?.status !== 'seen'
+                ? 'unseen_message'
+                : ''
+            }
+          >
+            {friendInfo.username}
+          </h4>
           <div className="msg-time">
             {
-              <strong>
+              <strong
+                className={
+                  messageInfo?.senderId !== myInfo.id &&
+                  messageInfo?.status !== undefined &&
+                  messageInfo?.status !== 'seen'
+                    ? 'unseen_message'
+                    : ''
+                }
+              >
                 <small>
                   {messageInfo && messageInfo.senderId !== myInfo.id
                     ? messageInfo.senderName + ': '
@@ -33,7 +49,17 @@ const Friends = ({ friend, myInfo, activeUsers }) => {
               </strong>
             }
             {messageInfo && messageInfo.message.text ? (
-              <span>{messageInfo.message.text.slice(0, 10)}</span>
+              <span
+                className={
+                  messageInfo?.senderId !== myInfo.id &&
+                  messageInfo?.status !== undefined &&
+                  messageInfo?.status !== 'seen'
+                    ? 'unseen_message'
+                    : ''
+                }
+              >
+                {messageInfo.message.text.slice(0, 10)}
+              </span>
             ) : messageInfo && messageInfo.message.image ? (
               <span>Sent an image</span>
             ) : (

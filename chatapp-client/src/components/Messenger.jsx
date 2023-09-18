@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import useSound from 'use-sound';
 import notificationSound from '../audio/notification.mp3';
 import sendMessageSound from '../audio/sending.mp3';
-import ActiveFriend from './ActiveFriend';
 import Friends from './Friends';
 import RightSide from './RightSide';
 import {
