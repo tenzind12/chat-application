@@ -75,6 +75,10 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('logout', (userId) => {
+    activeUsers = activeUsers.filter((user = user.id !== userId));
+  });
+
   socket.on('disconnect', () => {
     removeUser(socket.id);
     io.emit('getActiveUser', activeUsers); // sending to FE
