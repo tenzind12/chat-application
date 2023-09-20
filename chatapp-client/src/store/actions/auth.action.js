@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  LOGOUT_SUCCESS,
   REGISTER_FAIL,
   REGISTER_SUCCESS,
   USER_LOGIN_FAIL,
@@ -62,5 +63,20 @@ export const userLogin = (data) => {
         },
       });
     }
+  };
+};
+
+export const userLogoutRequest = () => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.post('/api/messenger/user-logout');
+      if (response.data.success) {
+        localStorage.removeItem('authToken');
+
+        dispatch({
+          type: LOGOUT_SUCCESS,
+        });
+      }
+    } catch (error) {}
   };
 };

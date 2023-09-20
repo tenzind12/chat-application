@@ -175,4 +175,10 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { userRegister, userLogin };
+const userLogout = async (req, res) => {
+  res.status(200).cookie('authToken', '').json({
+    success: true,
+  });
+};
+
+module.exports = { userRegister, userLogin, userLogout };

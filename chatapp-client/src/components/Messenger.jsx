@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaEllipsis, FaMagnifyingGlass, FaPenToSquare } from 'react-icons/fa6';
+import {
+  FaArrowRightFromBracket,
+  FaEllipsis,
+  FaMagnifyingGlass,
+  FaPenToSquare,
+} from 'react-icons/fa6';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import useSound from 'use-sound';
@@ -26,6 +31,7 @@ import {
   UPDATE_CURRENT_FRIEND_MESSAGE,
   UPDATE_FRIEND_MESSAGE,
 } from '../store/type/messenger.types';
+import { userLogoutRequest } from '../store/actions/auth.action';
 
 const Messenger = () => {
   // sound
@@ -288,6 +294,14 @@ const Messenger = () => {
     }
   };
 
+  const [hide, setHide] = useState(true);
+
+  const logout = () => {
+    dispatch(userLogoutRequest());
+
+    socketRef.current.emit('logout', myInfo.id);
+  };
+
   return (
     <div className="messenger">
       <div className="row">
@@ -304,11 +318,28 @@ const Messenger = () => {
               </div>
 
               <div className="icons">
-                <div className="icon">
+                <div className="icon" onClick={() => setHide(!hide)}>
                   <FaEllipsis />
                 </div>
                 <div className="icon">
                   <FaPenToSquare />
+                </div>
+
+                <div className={hide ? 'theme_logout' : 'theme_logout show'}>
+                  <h3>Dark mode</h3>
+
+                  <div className="on">
+                    <label htmlFor="dark">ON</label>
+                    <input type="radio" value="dark" name="theme" id="dark" />
+                  </div>
+                  <div className="on">
+                    <label htmlFor="white">OFF</label>
+                    <input type="radio" value="white" name="theme" id="white" />
+                  </div>
+
+                  <div className="logout" onClick={logout}>
+                    <FaArrowRightFromBracket /> Logout
+                  </div>
                 </div>
               </div>
             </div>
