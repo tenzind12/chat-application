@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {
   GET_FRIENDS_SUCCESS,
+  GET_THEME_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_SEND_SUCCESS,
+  SET_THEME_SUCCESS,
 } from '../type/messenger.types';
 
 export const requestFriends = () => {
@@ -84,5 +86,31 @@ export const deliveredMessageRequest = (message) => {
     } catch (error) {
       console.log('seenMessageRequest ', error);
     }
+  };
+};
+
+export const getTheme = () => {
+  return async (dispatch) => {
+    // check in localstarage
+    const theme = localStorage.getItem('theme');
+    dispatch({
+      type: GET_THEME_SUCCESS,
+      payload: {
+        theme: theme ? theme : 'white',
+      },
+    });
+  };
+};
+
+export const setTheme = (theme) => {
+  return async (dispatch) => {
+    localStorage.setItem('theme', theme);
+
+    dispatch({
+      type: SET_THEME_SUCCESS,
+      payload: {
+        theme: theme,
+      },
+    });
   };
 };

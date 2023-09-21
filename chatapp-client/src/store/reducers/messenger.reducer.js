@@ -1,12 +1,14 @@
 import {
   DELIVERED_MESSAGE,
   GET_FRIENDS_SUCCESS,
+  GET_THEME_SUCCESS,
   MESSAGE_GET_SUCCESS,
   MESSAGE_GET_SUCCESS_CLEAR,
   MESSAGE_SEND_SUCCESS,
   MESSAGE_SEND_SUCCESS_CLEAR,
   SEEN_ALL,
   SEEN_MESSAGE,
+  SET_THEME_SUCCESS,
   SOCKET_MESSAGE,
   UPDATE_CURRENT_FRIEND_MESSAGE,
   UPDATE_FRIEND_MESSAGE,
@@ -17,6 +19,7 @@ const messengerState = {
   messages: [],
   messageSendSuccess: false,
   messageGetSuccess: false,
+  currentTheme: '',
 };
 
 export const messengerReducer = (state = messengerState, action) => {
@@ -107,6 +110,18 @@ export const messengerReducer = (state = messengerState, action) => {
       );
       state.friends[seenSuccessIndex].messageInfo.status = 'seen';
       return { ...state };
+
+    case GET_THEME_SUCCESS:
+      return {
+        ...state,
+        currentTheme: payload.theme,
+      };
+
+    case SET_THEME_SUCCESS:
+      return {
+        ...state,
+        currentTheme: payload.theme,
+      };
 
     default:
       return state;

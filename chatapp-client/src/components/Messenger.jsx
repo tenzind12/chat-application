@@ -15,11 +15,13 @@ import Friends from './Friends';
 import RightSide from './RightSide';
 import {
   deliveredMessageRequest,
+  getTheme,
   requestFriends,
   requestGetMessage,
   requestSendImage,
   requestSendMessage,
   seenMessageRequest,
+  setTheme,
 } from '../store/actions/messenger.action';
 import {
   DELIVERED_MESSAGE,
@@ -39,7 +41,7 @@ const Messenger = () => {
   const [playSendMessageSound] = useSound(sendMessageSound);
 
   // selecting data from redux store
-  const { friends, messages, messageSendSuccess, messageGetSuccess } = useSelector(
+  const { friends, messages, messageSendSuccess, messageGetSuccess, currentTheme } = useSelector(
     (state) => state.messenger
   );
   const { myInfo } = useSelector((state) => state.auth);
@@ -302,8 +304,12 @@ const Messenger = () => {
     socketRef.current.emit('logout', myInfo.id);
   };
 
+  useEffect(() => {
+    dispatch(getTheme());
+  }, []);
+
   return (
-    <div className="messenger">
+    <div className={`${currentTheme === 'dark' && 'theme '} messenger`}>
       <div className="row">
         <div className="col-3">
           <div className="left-side">
@@ -330,11 +336,23 @@ const Messenger = () => {
 
                   <div className="on">
                     <label htmlFor="dark">ON</label>
-                    <input type="radio" value="dark" name="theme" id="dark" />
+                    <input
+                      onChange={(e) => dispatch(setTheme(e.target.value))}
+                      type="radio"
+                      value="dark"
+                      name="theme"
+                      id="dark"
+                    />
                   </div>
                   <div className="on">
                     <label htmlFor="white">OFF</label>
-                    <input type="radio" value="white" name="theme" id="white" />
+                    <input
+                      onChange={(e) => dispatch(setTheme(e.target.value))}
+                      type="radio"
+                      value="white"
+                      name="theme"
+                      id="white"
+                    />
                   </div>
 
                   <div className="logout" onClick={logout}>
