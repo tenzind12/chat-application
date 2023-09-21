@@ -24,8 +24,8 @@ const Friends = ({ friend, myInfo, activeUsers }) => {
               messageInfo?.senderId !== myInfo.id &&
               messageInfo?.status !== undefined &&
               messageInfo?.status !== 'seen'
-                ? 'unseen_message'
-                : ''
+                ? 'unseen_message fd_name '
+                : 'fd_name'
             }
           >
             {friendInfo.username}

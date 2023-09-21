@@ -308,6 +308,22 @@ const Messenger = () => {
     dispatch(getTheme());
   }, []);
 
+  // search filter left side
+  const searchFriend = (e) => {
+    const getFriendsByClass = document.querySelectorAll('.hover-friend');
+    const friendNames = document.querySelectorAll('.fd_name');
+    const input = e.target.value.toLowerCase();
+
+    friendNames.forEach((friend, i) => {
+      let text = friend.innerText.toLowerCase();
+      if (text.includes(input)) {
+        getFriendsByClass[i].style.display = '';
+      } else {
+        getFriendsByClass[i].style.display = 'none';
+      }
+    });
+  };
+
   return (
     <div className={`${currentTheme === 'dark' && 'theme '} messenger`}>
       <div className="row">
@@ -316,7 +332,11 @@ const Messenger = () => {
             <div className="top">
               <div className="image-name">
                 <div className="image">
-                  <img src={`/images/${myInfo.image}`} alt={myInfo.username} />
+                  <img
+                    src={`/images/${myInfo.image}
+                  `}
+                    alt={myInfo.username}
+                  />
                 </div>
                 <div className="name">
                   <h3>Hi {myInfo.username} </h3>
@@ -367,7 +387,12 @@ const Messenger = () => {
                 <button>
                   <FaMagnifyingGlass />
                 </button>
-                <input type="text" placeholder="search" className="form-control" />
+                <input
+                  onChange={searchFriend}
+                  type="text"
+                  placeholder="search"
+                  className="form-control"
+                />
               </div>
             </div>
 
